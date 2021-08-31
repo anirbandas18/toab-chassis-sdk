@@ -23,11 +23,11 @@ public class TOABFeignErrorDecoderFactory implements ErrorDecoder, InitializingB
 
     private Map<String, TOABFeignBaseExceptionHandler> feignClientExceptionHandlers;
     private Default defaultFeignErrorDecoder;
-    private String basePackageForFeign;
+    private String[] basePackageForFeign;
     private ApplicationContext applicationContext;
 
     @Autowired
-    public TOABFeignErrorDecoderFactory(ApplicationContext applicationContext, String basePackageForFeign) {
+    public TOABFeignErrorDecoderFactory(ApplicationContext applicationContext, String...basePackageForFeign) {
         this.applicationContext = applicationContext;
         this.basePackageForFeign = basePackageForFeign;
     }
