@@ -19,13 +19,12 @@ public class TOABBaseMongoRepositoryImpl<T, I extends Serializable> extends Simp
 
     public TOABBaseMongoRepositoryImpl(MongoEntityInformation<T, I> metadata, MongoOperations mongoOperations) {
         super(metadata, mongoOperations);
-
-        this.entityInformation = entityInformation;
+        this.entityInformation = metadata;
         this.mongoOperations = mongoOperations;
     }
 
     @Override
-    public List<T> findAll(Query query) {
+    public List<T> query(Query query) {
         if(query == null) {
             log.debug("Query can't be null");
             throw new TOABSystemException(TOABErrorCode.SYSTEM_INTERNAL_ERROR, "Query can't be null");
