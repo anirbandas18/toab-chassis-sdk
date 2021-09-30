@@ -37,3 +37,6 @@ build/
 /.mvn/wrapper/MavenWrapperDownloader.java
 /logs/metadata-service.log
 /logs/*.log
+
+### MAC OS ###
+.DS_Store

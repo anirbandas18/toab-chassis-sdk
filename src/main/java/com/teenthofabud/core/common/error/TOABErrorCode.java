@@ -4,7 +4,8 @@ public enum TOABErrorCode implements TOABError {
 
         PATCH_ATTRIBUTE_INVALID("TOAB-COMMON-001", 400),
         UNEXPECTED_CLIENT_RESPONSE_STATUS("TOAB-COMMON-002", 422),
-        SYSTEM_IO_FAILURE("TOAB-COMMON-003", 422);
+        SYSTEM_IO_FAILURE("TOAB-COMMON-003", 422),
+        SYSTEM_INTERNAL_ERROR("TOAB-COMMON-004", 500);
 
     private String errorCode;
     private int httpStatusCode;
