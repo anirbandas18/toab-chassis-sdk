@@ -72,6 +72,7 @@ public class TOABSystemException extends RuntimeException {
     }
 
     public TOABSystemException(TOABError error, Object[] parameters) {
+        super(error.getErrorCode());
         this.error = error;
         this.message = "";
         this.parameters = parameters;
