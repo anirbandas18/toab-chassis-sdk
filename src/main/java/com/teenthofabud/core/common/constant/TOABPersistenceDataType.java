@@ -4,6 +4,8 @@ public enum TOABPersistenceDataType {
 
     NUMERIC,
     STRING,
-    BOOLEAN;
+    BOOLEAN,
+    ENUM,
+    CUSTOM;
 
 }
