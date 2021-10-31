@@ -1,12 +1,83 @@
 package com.teenthofabud.core.common.proxy;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teenthofabud.core.common.data.vo.ErrorVo;
+import com.teenthofabud.core.common.error.TOABErrorCode;
 import com.teenthofabud.core.common.error.TOABFeignException;
+import com.teenthofabud.core.common.error.TOABSystemException;
 import feign.Response;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-public interface TOABFeignBaseExceptionHandler {
+@Slf4j
+public abstract class TOABFeignBaseExceptionHandler {
 
-    public Optional<? extends TOABFeignException> parseResponseToException(Response response);
+    public abstract HttpStatus[] getClientErrorResponseStatuses();
+    public abstract HttpStatus[] getServerErrorResponseStatuses();
+
+    @Autowired
+    public void setOm(ObjectMapper om) {
+        this.om = om;
+    }
+
+    private ObjectMapper om;
+
+    private boolean isStatusCodeResemblesClientError(HttpStatus httpStatusCode) {
+        for(HttpStatus httpStatus : getClientErrorResponseStatuses()) {
+            if(httpStatus.equals(httpStatusCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isStatusCodeResemblesServerError(HttpStatus httpStatusCode) {
+        for(HttpStatus httpStatus : getServerErrorResponseStatuses()) {
+            if(httpStatus.equals(httpStatusCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Optional<? extends TOABFeignException> parseResponseToException(Response response) {
+        Optional<? extends TOABFeignException> optEx = Optional.empty();
+        try {
+            HttpStatus httpStatusCode = HttpStatus.resolve(response.status());
+            InputStream rawErrorResponseBody = response.body().asInputStream();
+            byte[] rawResponse = rawErrorResponseBody.readAllBytes();
+            String formattedResponse = new String(rawResponse, StandardCharsets.UTF_8);
+            log.debug("Response from service: {}", formattedResponse);
+            if (isStatusCodeResemblesClientError(httpStatusCode)) {
+                log.debug("Client calling error");
+                ErrorVo errorDetails = om.readValue(rawResponse, ErrorVo.class);
+                optEx = Optional.of(new TOABFeignException(errorDetails.getCode(), errorDetails.getMessage(), errorDetails.getDomain()));
+            }  else if (isStatusCodeResemblesServerError(httpStatusCode)) {
+                log.debug("Service stability error");
+                TypeReference<HashMap<String,Object>> mapTypeReference = new TypeReference<HashMap<String,Object>>() {};
+                Map<String, Object> errorDetails = om.readValue(rawResponse, mapTypeReference);
+                String message = (String) errorDetails.get("error");
+                String domain = (String) errorDetails.get("path");
+                optEx = Optional.of(new TOABFeignException(TOABErrorCode.SYSTEM_IO_FAILURE.getErrorCode(), message, domain));
+            }
+            else {
+                optEx = Optional.of(new TOABFeignException(TOABErrorCode.UNEXPECTED_CLIENT_RESPONSE_STATUS.getErrorCode(), formattedResponse));
+            }
+
+            return optEx;
+        } catch (IOException e) {
+            log.error("Unable to parse response body", e);
+            throw new TOABSystemException(TOABErrorCode.SYSTEM_IO_FAILURE, "Unable to parse response body", e);
+        }
+    }
 
 }
