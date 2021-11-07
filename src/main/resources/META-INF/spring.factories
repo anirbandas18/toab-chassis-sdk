@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.teenthofabud.core.common.configuration.TOABAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.teenthofabud.core.common.configuration.TOABAutoConfiguration,com.teenthofabud.core.common.configuration.TOABMongoAutoConfiguratio
