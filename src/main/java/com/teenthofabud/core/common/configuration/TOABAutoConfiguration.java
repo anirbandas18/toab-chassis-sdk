@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.teenthofabud.core.common.factory.TOABRepositoryDynamicQueryBuilderFactory;
 import com.teenthofabud.core.common.handler.TOABBaseAuditPropertyHandler;
 import com.teenthofabud.core.common.handler.TOABMessageSource;
 import com.teenthofabud.core.common.service.TOABBaseService;
@@ -54,11 +53,6 @@ public class TOABAutoConfiguration {
     @Bean
     public TOABBaseService toabBaseService() {
         return new TOABBaseServiceImpl();
-    }
-
-    @Bean
-    public TOABRepositoryDynamicQueryBuilderFactory dynamicQueryBuilderFactory() {
-            return new TOABRepositoryDynamicQueryBuilderFactory();
     }
 
     @Bean
