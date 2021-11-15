@@ -29,5 +29,12 @@ public class TOABValidationContextHolder {
     public static void clearSupportingValidationParameterContext() {
         SUPPORTING_VALIDATION_PARAMETER_CONTEXT.remove();
     }
+    public static void clearSupportingValidationParameterContext(String key) {
+        Map<String,Object> parameters = SUPPORTING_VALIDATION_PARAMETER_CONTEXT.get();
+        if(!parameters.isEmpty()) {
+            parameters.remove(key);
+            SUPPORTING_VALIDATION_PARAMETER_CONTEXT.set(parameters);
+        }
+    }
 
 }
