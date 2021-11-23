@@ -7,6 +7,7 @@ import com.teenthofabud.core.common.error.TOABErrorCode;
 import com.teenthofabud.core.common.error.TOABFeignException;
 import com.teenthofabud.core.common.error.TOABSystemException;
 import feign.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,13 +24,15 @@ public abstract class TOABFeignBaseExceptionHandler {
 
     public abstract HttpStatus[] getClientErrorResponseStatuses();
     public abstract HttpStatus[] getServerErrorResponseStatuses();
+    public abstract Optional<ErrorVo> getClientErrorMappedNativeErrorModel(byte[] rawResponse);
 
     @Autowired
-    public void setOm(ObjectMapper om) {
-        this.om = om;
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
-    private ObjectMapper om;
+    @Getter
+    private ObjectMapper objectMapper;
 
     private boolean isStatusCodeResemblesClientError(HttpStatus httpStatusCode) {
         for(HttpStatus httpStatus : getClientErrorResponseStatuses()) {
@@ -49,6 +52,11 @@ public abstract class TOABFeignBaseExceptionHandler {
         return false;
     }
 
+    private Optional<? extends TOABFeignException> parseErrorResponse(ErrorVo errorDetails) {
+        Optional<? extends TOABFeignException> optEx = Optional.of(new TOABFeignException(errorDetails.getCode(), errorDetails.getMessage(), errorDetails.getDomain()));
+        return optEx;
+    }
+
     public Optional<? extends TOABFeignException> parseResponseToException(Response response) {
         Optional<? extends TOABFeignException> optEx = Optional.empty();
         try {
@@ -59,12 +67,14 @@ public abstract class TOABFeignBaseExceptionHandler {
             log.debug("Response from service: {}", formattedResponse);
             if (isStatusCodeResemblesClientError(httpStatusCode)) {
                 log.debug("Client calling error");
-                ErrorVo errorDetails = om.readValue(rawResponse, ErrorVo.class);
-                optEx = Optional.of(new TOABFeignException(errorDetails.getCode(), errorDetails.getMessage(), errorDetails.getDomain()));
+                Optional<ErrorVo> optErrorDetails = getClientErrorMappedNativeErrorModel(rawResponse);
+                if(optErrorDetails.isPresent()) {
+                    optEx = parseErrorResponse(optErrorDetails.get());
+                }
             }  else if (isStatusCodeResemblesServerError(httpStatusCode)) {
                 log.debug("Service stability error");
                 TypeReference<HashMap<String,Object>> mapTypeReference = new TypeReference<HashMap<String,Object>>() {};
-                Map<String, Object> errorDetails = om.readValue(rawResponse, mapTypeReference);
+                Map<String, Object> errorDetails = objectMapper.readValue(rawResponse, mapTypeReference);
                 String message = (String) errorDetails.get("error");
                 String domain = (String) errorDetails.get("path");
                 optEx = Optional.of(new TOABFeignException(TOABErrorCode.SYSTEM_IO_FAILURE.getErrorCode(), message, domain));

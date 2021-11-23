@@ -1,5 +1,6 @@
 package com.teenthofabud.core.common.repository;
 
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 
@@ -14,5 +15,8 @@ public interface TOABSimpleEntityBaseRepository<T> extends JpaRepository<T, Long
 
     @Lock(LockModeType.PESSIMISTIC_READ)
     public Optional<T> findById(Long id);
+
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    public <S extends T> List<S> findAll(Example<S> example);
 
 }

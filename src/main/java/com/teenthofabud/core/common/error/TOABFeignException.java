@@ -11,6 +11,11 @@ public class TOABFeignException extends Exception {
     private transient String errorMessage;
     private transient String errorDomain;
 
+    public TOABFeignException(String errorMessage) {
+        super(errorMessage);
+        this.errorMessage = errorMessage;
+    }
+
     public TOABFeignException(String errorCode, String errorMessage) {
         super(errorMessage);
         this.errorCode = errorCode;

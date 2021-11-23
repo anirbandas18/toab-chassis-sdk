@@ -13,14 +13,16 @@ public abstract class TOABBaseEntity2VoConverter<S extends TOABBaseEntity,T exte
         TOABCascadeLevel cascadeLevel = TOABRequestContextHolder.getCascadeLevelContext();
         switch (cascadeLevel) {
             case ONE:
+            case TWO:
                 vo.setActive(entity.getActive());
                 vo.setModifiedOn(entity.getModifiedOn());
                 vo.setCreatedOn(entity.getCreatedOn());
                 vo.setModifiedBy(entity.getModifiedBy());
                 vo.setCreatedBy(entity.getCreatedBy());
                 break;
-            case TWO:
+            default:
                 log.debug("No eligible fields available in {} to perform two level cascading in target type");
+                break;
         }
     }
 
