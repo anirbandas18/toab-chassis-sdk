@@ -43,7 +43,6 @@ public class TOABMessageSource extends ReloadableResourceBundleMessageSource {
             }
         } catch (IOException e) {
             log.debug("Unable to load message resources", e);
-            throw new TOABSystemException(TOABErrorCode.SYSTEM_IO_FAILURE, "", e);
         }
         return new PropertiesHolder(properties, lastModified);
     }

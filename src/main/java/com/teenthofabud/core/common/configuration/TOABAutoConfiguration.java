@@ -32,7 +32,7 @@ public class TOABAutoConfiguration {
     @Bean
     public TOABMessageSource messageSource() {
         TOABMessageSource messageSource = new TOABMessageSource();
-        messageSource.setBasenames("classpath*:common_messages*", "classpath*:messages*");
+        messageSource.setBasenames("messages", "common_messages");
         return messageSource;
     }
 
