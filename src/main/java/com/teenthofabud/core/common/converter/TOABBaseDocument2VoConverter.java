@@ -13,6 +13,8 @@ public abstract class TOABBaseDocument2VoConverter<S extends TOABBaseDocument,T 
         TOABCascadeLevel cascadeLevel = TOABRequestContextHolder.getCascadeLevelContext();
         switch (cascadeLevel) {
             case ONE:
+                vo.setActive(entity.getActive());
+                break;
             case TWO:
                 vo.setActive(entity.getActive());
                 vo.setModifiedOn(entity.getModifiedOn());

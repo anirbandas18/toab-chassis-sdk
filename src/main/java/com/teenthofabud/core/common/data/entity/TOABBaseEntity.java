@@ -10,13 +10,11 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@MappedSuperclass
 @ToString
 public abstract class TOABBaseEntity {
 
