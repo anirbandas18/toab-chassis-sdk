@@ -10,8 +10,11 @@ import com.teenthofabud.core.common.service.TOABBaseService;
 import com.teenthofabud.core.common.service.impl.TOABBaseServiceImpl;
 import com.teenthofabud.core.common.validator.PatchOperationFormValidator;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -56,7 +59,7 @@ public class TOABAutoConfiguration {
     }
 
     @Bean
-    public TOABBaseAuditPropertyHandler baseAuditPropertyHandler() {
+    public AuditorAware<Long> baseAuditPropertyHandler() {
         return new TOABBaseAuditPropertyHandler();
     }
 }
