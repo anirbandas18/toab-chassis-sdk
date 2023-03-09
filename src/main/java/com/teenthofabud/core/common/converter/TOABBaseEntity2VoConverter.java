@@ -6,6 +6,8 @@ import com.teenthofabud.core.common.data.entity.TOABBaseEntity;
 import com.teenthofabud.core.common.data.vo.TOABBaseVo;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.temporal.ChronoUnit;
+
 @Slf4j
 public abstract class TOABBaseEntity2VoConverter<S extends TOABBaseEntity,T extends TOABBaseVo> {
 
@@ -17,8 +19,8 @@ public abstract class TOABBaseEntity2VoConverter<S extends TOABBaseEntity,T exte
                 break;
             case TWO:
                 vo.setActive(entity.getActive());
-                vo.setModifiedOn(entity.getModifiedOn());
-                vo.setCreatedOn(entity.getCreatedOn());
+                vo.setModifiedOn(entity.getModifiedOn().truncatedTo(ChronoUnit.MILLIS));
+                vo.setCreatedOn(entity.getCreatedOn().truncatedTo(ChronoUnit.MILLIS));
                 vo.setModifiedBy(entity.getModifiedBy());
                 vo.setCreatedBy(entity.getCreatedBy());
                 break;
